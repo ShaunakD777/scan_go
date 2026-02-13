@@ -1,0 +1,274 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 
+  SCAN & GO - Design System
+  Premium dark retail checkout experience
+  Inspired by Apple Pay, Amazon Go, Stripe
+*/
+
+@layer base {
+  :root {
+    /* Dark theme as default - obsidian/charcoal base */
+    --background: 220 20% 6%;
+    --foreground: 210 40% 98%;
+
+    --card: 220 18% 10%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 220 18% 8%;
+    --popover-foreground: 210 40% 98%;
+
+    /* Electric teal - primary action color */
+    --primary: 174 72% 56%;
+    --primary-foreground: 220 20% 6%;
+
+    /* Soft slate for secondary elements */
+    --secondary: 220 14% 18%;
+    --secondary-foreground: 210 40% 98%;
+
+    /* Muted surfaces */
+    --muted: 220 14% 14%;
+    --muted-foreground: 215 20% 55%;
+
+    /* Accent - vibrant cyan glow */
+    --accent: 174 100% 42%;
+    --accent-foreground: 220 20% 6%;
+
+    /* Success green for payments */
+    --success: 142 76% 48%;
+    --success-foreground: 220 20% 6%;
+
+    /* Warning amber */
+    --warning: 38 92% 50%;
+    --warning-foreground: 220 20% 6%;
+
+    /* Destructive red */
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 14% 18%;
+    --input: 220 14% 16%;
+    --ring: 174 72% 56%;
+
+    --radius: 0.75rem;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(174 72% 56%) 0%, hsl(174 100% 42%) 100%);
+    --gradient-dark: linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 20% 4%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(220 18% 12%) 0%, hsl(220 18% 8%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(142 76% 48%) 0%, hsl(142 76% 36%) 100%);
+    --gradient-glow: radial-gradient(ellipse at center, hsl(174 72% 56% / 0.15) 0%, transparent 70%);
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px -2px hsl(220 20% 4% / 0.5);
+    --shadow-md: 0 8px 24px -8px hsl(220 20% 4% / 0.7);
+    --shadow-lg: 0 16px 48px -16px hsl(220 20% 4% / 0.8);
+    --shadow-glow: 0 0 40px -8px hsl(174 72% 56% / 0.4);
+    --shadow-success: 0 0 40px -8px hsl(142 76% 48% / 0.4);
+
+    /* Sidebar */
+    --sidebar-background: 220 18% 8%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 174 72% 56%;
+    --sidebar-primary-foreground: 220 20% 6%;
+    --sidebar-accent: 220 14% 14%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 220 14% 16%;
+    --sidebar-ring: 174 72% 56%;
+  }
+
+  /* Light theme (optional) */
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 220 20% 10%;
+    --card: 0 0% 98%;
+    --card-foreground: 220 20% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 10%;
+    --primary: 174 72% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 20% 10%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 174 72% 40%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 174 72% 40%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    background-image: var(--gradient-dark);
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+}
+
+@layer components {
+  /* Glass morphism card */
+  .glass-card {
+    @apply rounded-xl border border-white/10 bg-card/80 backdrop-blur-xl;
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Glowing button effect */
+  .glow-button {
+    @apply relative overflow-hidden;
+    box-shadow: var(--shadow-glow);
+    transition: all 0.3s ease;
+  }
+
+  .glow-button:hover {
+    box-shadow: 0 0 60px -8px hsl(174 72% 56% / 0.6);
+    transform: translateY(-2px);
+  }
+
+  /* Success glow */
+  .glow-success {
+    box-shadow: var(--shadow-success);
+  }
+
+  /* Scanner overlay */
+  .scanner-overlay {
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      hsl(174 72% 56% / 0.1) 50%,
+      transparent 100%
+    );
+    animation: scan 2s ease-in-out infinite;
+  }
+
+  @keyframes scan {
+    0%, 100% { transform: translateY(-100%); }
+    50% { transform: translateY(100%); }
+  }
+
+  /* Pulse animation for scanner */
+  .pulse-ring {
+    @apply absolute rounded-full border-2 border-primary;
+    animation: pulse-ring 1.5s ease-out infinite;
+  }
+
+  @keyframes pulse-ring {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+  }
+
+  /* Floating label input */
+  .floating-input {
+    @apply relative;
+  }
+
+  .floating-input input:focus + label,
+  .floating-input input:not(:placeholder-shown) + label {
+    @apply -translate-y-6 scale-75 text-primary;
+  }
+
+  /* Cart item slide */
+  .cart-item {
+    @apply transition-all duration-300;
+  }
+
+  .cart-item:hover {
+    @apply bg-secondary/50;
+  }
+
+  /* QR Code container */
+  .qr-container {
+    @apply p-6 bg-white rounded-2xl;
+    box-shadow: 0 0 80px -20px hsl(174 72% 56% / 0.3);
+  }
+
+  /* Store card */
+  .store-card {
+    @apply glass-card p-6 cursor-pointer transition-all duration-300;
+  }
+
+  .store-card:hover {
+    @apply border-primary/50;
+    box-shadow: var(--shadow-glow);
+  }
+
+  .store-card.selected {
+    @apply border-primary bg-primary/10;
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* Role badge */
+  .role-badge {
+    @apply px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider;
+  }
+
+  .role-badge.super-admin {
+    @apply bg-gradient-to-r from-amber-500 to-orange-500 text-white;
+  }
+
+  .role-badge.admin {
+    @apply bg-gradient-to-r from-purple-500 to-indigo-500 text-white;
+  }
+
+  .role-badge.user {
+    @apply bg-gradient-to-r from-primary to-accent text-background;
+  }
+
+  /* Bottom nav for mobile */
+  .bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 glass-card rounded-none border-t border-x-0 border-b-0;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Page transitions */
+  .page-enter {
+    animation: pageEnter 0.3s ease-out;
+  }
+
+  @keyframes pageEnter {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Success checkmark */
+  .success-checkmark {
+    @apply w-24 h-24 rounded-full bg-success/20 flex items-center justify-center;
+    animation: successPop 0.5s ease-out;
+  }
+
+  @keyframes successPop {
+    0% { transform: scale(0); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+
+  /* Skeleton loading */
+  .skeleton {
+    @apply bg-secondary/50 rounded animate-pulse;
+  }
+}
