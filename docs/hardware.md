@@ -31,29 +31,26 @@
 ## Arduino Code
 
 ```cpp
-/*
- * Simple ESP32 RFID Reader with Buzzer (Low Latency + LEDC Fix)
- * Works on ESP32 core 2.x and 3.x
- */
-
 #include <SPI.h>
 #include <MFRC522.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 
-#define SS_PIN          5
-#define RST_PIN         27
-#define BUZZER_PIN      25
-#define LEDC_CHANNEL    0      // 0-15 available
-#define LEDC_FREQ       1000   // 1kHz tone
-#define LEDC_RESOLUTION 10     // 10-bit (0-1023)
+#define SS_PIN 5
+#define RST_PIN 27
+#define BUZZER_PIN 25
+#define LEDC_CHANNEL 0
 
 MFRC522 rfid(SS_PIN, RST_PIN);
 
-const char* ssid = "Your Wifi Name";
+const char* ssid = "Your Wifi  Name";
 const char* password = "Your Wifi Password";
-const char* serverUrl = "http://Your_device_IPv4_Address:8000/check-payment";   // ← Update if IP changes
+
+// ==================== CHANGE THIS LINE EVERY TIME ====================
+const char* serverBaseUrl = "http://your_laptop_IPv4_address:8000/check-payment?rfid_id=";  
+// ←←← Put your CURRENT laptop IPv4 here ↑↑↑
+// =====================================================================
 
 void setup() {
   Serial.begin(9600);
@@ -61,8 +58,7 @@ void setup() {
   rfid.PCD_Init();
   pinMode(BUZZER_PIN, OUTPUT);
 
-  // === LEDC INITIALIZATION (fixes "LEDC not initialized" error) ===
-  ledcSetup(LEDC_CHANNEL, LEDC_FREQ, LEDC_RESOLUTION);
+  ledcSetup(LEDC_CHANNEL, 1000, 10);
   ledcAttachPin(BUZZER_PIN, LEDC_CHANNEL);
 
   WiFi.begin(ssid, password);
@@ -70,7 +66,7 @@ void setup() {
     delay(500);
     Serial.print(".");
   }
-  Serial.println("\nConnected to WiFi. IP: " + WiFi.localIP().toString());
+  Serial.println("\nConnected. IP: " + WiFi.localIP().toString());
   Serial.println("Tap RFID card...");
 }
 
@@ -85,44 +81,44 @@ void loop() {
 
     Serial.println("UID: " + uid);
 
-    if (WiFi.status() == WL_CONNECTED) {
-      HTTPClient http;
-      http.begin(serverUrl);
-      http.addHeader("Content-Type", "application/json");
-      http.setConnectTimeout(2000);
-      http.setTimeout(5000);
+    HTTPClient http;
+    String url = String(serverBaseUrl) + uid;
+    http.begin(url);
+    http.setConnectTimeout(3000);
+    http.setTimeout(6000);
 
-      String payload = "{\"rfid_id\":\"" + uid + "\"}";
-      int httpCode = http.POST(payload);
+    int code = http.GET();
 
-      if (httpCode > 0) {
-        String response = http.getString();
-        Serial.println("Response: " + response);
+    Serial.print("HTTP Code: ");
+    Serial.println(code);
 
-        StaticJsonDocument<200> doc;
-        if (deserializeJson(doc, response) == DeserializationError::Ok && doc.containsKey("paid")) {
-          bool paid = doc["paid"];
-          if (paid) {
-            Serial.println("Payment done - Access granted");
-          } else {
-            Serial.println("Payment not done - Access denied");
-            for (int i = 0; i < 3; i++) {
-              ledcWrite(LEDC_CHANNEL, 512);   // 50% duty = sound
-              delay(300);
-              ledcWrite(LEDC_CHANNEL, 0);     // off
-              delay(200);
-            }
+    if (code > 0) {
+      String resp = http.getString();
+      Serial.println("Response: " + resp);
+
+      StaticJsonDocument<200> doc;
+      if (deserializeJson(doc, resp) == DeserializationError::Ok && doc.containsKey("paid")) {
+        bool paid = doc["paid"];
+        if (paid) {
+          Serial.println(">>> ACCESS GRANTED - No beep");
+        } else {
+          Serial.println(">>> ACCESS DENIED");
+          for (int i = 0; i < 3; i++) {
+            ledcWrite(LEDC_CHANNEL, 512);
+            delay(300);
+            ledcWrite(LEDC_CHANNEL, 0);
+            delay(200);
           }
         }
-      } else {
-        Serial.println("HTTP Error: " + String(httpCode));
       }
-      http.end();
+    } else {
+      Serial.println("Connection failed (Error " + String(code) + ")");
     }
+    http.end();
 
     rfid.PICC_HaltA();
     rfid.PCD_StopCrypto1();
-    delay(1500);        // Reduced debounce
+    delay(1500);
   }
 }
 
