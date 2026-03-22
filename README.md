@@ -168,15 +168,6 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 
 The service exposes a `POST /check-payment` endpoint that accepts an RFID tag ID and returns whether the corresponding product has been paid for.
 
-An alternative gate service with Docker support is available in `backend-gate/`:
-
-```bash
-cd backend-gate
-pip install -r requirements.txt
-# or use Docker:
-docker-compose up
-```
-
 ---
 
 ## Payment Flow
