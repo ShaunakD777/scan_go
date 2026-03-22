@@ -24,6 +24,6 @@ async def check_payment(request: RFIDRequest):
             return {"paid": is_paid}
         else:
             # Not found: Treat as not paid
-            return {"paid":True}
+            return {"paid":False}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
