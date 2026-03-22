@@ -123,7 +123,7 @@ void loop() {
 }
 
 ```
-## 5. ⚙️ Setup Instructions
+## 5. Setup Instructions
 
 ```md
 ## Setup
@@ -133,8 +133,8 @@ void loop() {
 3. Install MFRC522 library
 4. Select correct COM port
 5. Upload code
-
-## Output
+```
+## 6. Output
 
 - Card unpaid → buzzer beeps
 - Card paid → buzzer should not beep
