@@ -4,7 +4,7 @@ A full-stack smart retail self-checkout system. Shoppers scan product barcodes i
 
 ---
 
-## 🧭 System Overview
+## System Overview
 
 - Frontend: React PWA for scanning and checkout
 - Backend: Supabase handles auth, database, and payments
